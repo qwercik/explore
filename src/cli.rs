@@ -11,7 +11,7 @@ pub struct Options {
     pub start_url: String,
 
     #[structopt(help="URL to which you would like to find a path, beginning from the start URL")]
-    pub final_url: String,
+    pub final_url: String
 }
 
 impl Options {
