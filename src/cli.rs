@@ -1,5 +1,6 @@
 use structopt::StructOpt;
 use url::Url;
+use regex::Regex;
 
 #[derive(Debug, StructOpt)]
 #[structopt(
@@ -18,7 +19,15 @@ pub struct Options {
         help="URL to which you would like to find a path, beginning from the start URL",
         parse(try_from_str=Url::parse)
     )]
-    pub final_url: Url
+    pub final_url: Url,
+
+    #[structopt(
+        short="d",
+        long="domain",
+        help="Regex for filtering URLs",
+        parse(try_from_str=Regex::new)
+    )]
+    pub domain_regex: Option<Regex>
 }
 
 impl Options {
