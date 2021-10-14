@@ -1,4 +1,5 @@
 use structopt::StructOpt;
+use url::Url;
 
 #[derive(Debug, StructOpt)]
 #[structopt(
@@ -7,11 +8,17 @@ use structopt::StructOpt;
     author="Eryk Andrzejewski"
 )]
 pub struct Options {
-    #[structopt(help="URL from which you would like to start exploring")]
-    pub start_url: String,
+    #[structopt(
+        help="URL from which you would like to start exploring",
+        parse(try_from_str=Url::parse)
+    )]
+    pub start_url: Url,
 
-    #[structopt(help="URL to which you would like to find a path, beginning from the start URL")]
-    pub final_url: String
+    #[structopt(
+        help="URL to which you would like to find a path, beginning from the start URL",
+        parse(try_from_str=Url::parse)
+    )]
+    pub final_url: Url
 }
 
 impl Options {

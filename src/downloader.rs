@@ -1,3 +1,4 @@
+use url::Url;
 use reqwest::blocking::Response;
 
 fn valid_content_type(response: &Response) -> bool {
@@ -9,8 +10,8 @@ fn valid_content_type(response: &Response) -> bool {
         .is_some()
 }
 
-pub fn download(url: &str) -> Option<String> {
-    reqwest::blocking::get(url)
+pub fn download(url: &Url) -> Option<String> {
+    reqwest::blocking::get(url.as_str())
         .ok()
         .filter(valid_content_type)
         .map(|response| response.text().ok())
