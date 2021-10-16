@@ -1,7 +1,7 @@
 mod cli;
 mod document;
-mod url_extractor;
 mod explorer;
+mod url_extractor;
 
 use cli::Options;
 use explorer::explore;

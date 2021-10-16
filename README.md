@@ -36,6 +36,11 @@ explore 'https://en.wikipedia.org/wiki/Prolog' 'https://en.wikipedia.org/wiki/Po
 
 Unfortunately, at the moment app doesn't store URL's tree.
 
+To get know more about supported options use `--help`.
+```sh
+explore --help
+```
+
 ## To do
 - better up performance
 - provide an option for storing URL's tree

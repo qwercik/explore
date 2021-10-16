@@ -2,11 +2,12 @@ use reqwest::blocking::Response;
 
 pub struct Document<'a> {
     url: &'a str,
-    content: String
+    content: String,
 }
 
 fn valid_content_type(response: &Response) -> bool {
-    response.headers()
+    response
+        .headers()
         .get("content-type")
         .map(|value| value.to_str().ok())
         .flatten()
@@ -21,10 +22,7 @@ impl<'a> Document<'a> {
             .filter(valid_content_type)
             .map(|response| response.text().ok())
             .flatten()
-            .map(|content| Self {
-                url,
-                content
-            })
+            .map(|content| Self { url, content })
     }
 
     pub fn url(&self) -> &'a str {
@@ -35,5 +33,3 @@ impl<'a> Document<'a> {
         &self.content
     }
 }
-
-

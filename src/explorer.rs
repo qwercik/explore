@@ -1,15 +1,15 @@
-use url::Url;
-use regex::Regex;
-use std::collections::{VecDeque, HashSet};
 use crate::cli::Options;
 use crate::document::Document;
 use crate::url_extractor::extract_from_html;
+use regex::Regex;
+use std::collections::{HashSet, VecDeque};
+use url::Url;
 
 fn is_url_domain_ok(domain_regex: &Regex, url: &str) -> bool {
     Url::parse(url)
         .map(|parsed_url| match parsed_url.domain() {
             Some(domain) => domain_regex.is_match(domain),
-            _ => false
+            _ => false,
         })
         .ok()
         .unwrap_or(false)
@@ -39,14 +39,13 @@ pub fn explore(options: &Options) -> usize {
 
     while !queue.is_empty() {
         // Could be optimized if url detected after extracting
-        let final_url = queue.iter()
-            .find(|&url| url == options.final_url.as_str());
-        
+        let final_url = queue.iter().find(|&url| url == options.final_url.as_str());
+
         if let Some(url) = final_url {
             if options.verbose {
                 println!("{}", url);
             }
-            
+
             break;
         };
 
@@ -58,14 +57,14 @@ pub fn explore(options: &Options) -> usize {
                 println!("{}", current_url);
             }
 
-            let result = extract_urls_from_site(&current_url, &options);
+            let result = extract_urls_from_site(&current_url, options);
             visited.insert(current_url);
 
             if let Some(urls) = result {
                 auxillary_queue.extend(urls.into_iter());
             }
         }
-        
+
         if options.verbose {
             println!();
         }

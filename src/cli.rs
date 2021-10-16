@@ -1,12 +1,12 @@
+use regex::Regex;
 use structopt::StructOpt;
 use url::Url;
-use regex::Regex;
 
 #[derive(Debug, StructOpt)]
 #[structopt(
-    name="explore",
-    about="Explore the WWW and find the shortest path between two HTML documents",
-    author="Eryk Andrzejewski"
+    name = "explore",
+    about = "Explore the WWW and find the shortest path between two HTML documents",
+    author = "Eryk Andrzejewski"
 )]
 pub struct Options {
     #[structopt(
@@ -29,12 +29,8 @@ pub struct Options {
     )]
     pub domain_regex: Option<Regex>,
 
-    #[structopt(
-        short="v",
-        long="verbose",
-        help="Print out all visited URLs"
-    )]
-    pub verbose: bool
+    #[structopt(short = "v", long = "verbose", help = "Print out all visited URLs")]
+    pub verbose: bool,
 }
 
 impl Options {
