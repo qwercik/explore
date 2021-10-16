@@ -27,7 +27,14 @@ pub struct Options {
         help="Regex for filtering URLs",
         parse(try_from_str=Regex::new)
     )]
-    pub domain_regex: Option<Regex>
+    pub domain_regex: Option<Regex>,
+
+    #[structopt(
+        short="v",
+        long="verbose",
+        help="Print out all visited URLs"
+    )]
+    pub verbose: bool
 }
 
 impl Options {

@@ -43,7 +43,10 @@ pub fn explore(options: &Options) -> usize {
             .find(|&url| url == options.final_url.as_str());
         
         if let Some(url) = final_url {
-            println!("{}", url);
+            if options.verbose {
+                println!("{}", url);
+            }
+            
             break;
         };
 
@@ -51,9 +54,10 @@ pub fn explore(options: &Options) -> usize {
             let current_url = queue.pop_front().unwrap();
             if visited.contains(&current_url) {
                 continue;
+            } else if options.verbose {
+                println!("{}", current_url);
             }
 
-            println!("{}", current_url);
             let result = extract_urls_from_site(&current_url, &options);
             visited.insert(current_url);
 
@@ -62,7 +66,10 @@ pub fn explore(options: &Options) -> usize {
             }
         }
         
-        println!();
+        if options.verbose {
+            println!();
+        }
+
         nesting_level += 1;
         queue.append(&mut auxillary_queue);
     }

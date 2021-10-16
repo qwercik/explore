@@ -9,5 +9,10 @@ use explorer::explore;
 fn main() {
     let options = Options::get();
     let nesting_level = explore(&options);
-    println!("Nesting level: {}", nesting_level);
+
+    if options.verbose {
+        println!("Nesting level: {}", nesting_level);
+    } else {
+        println!("{}", nesting_level);
+    }
 }
