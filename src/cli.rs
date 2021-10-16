@@ -29,19 +29,15 @@ pub struct Options {
     )]
     pub domain_regex: Option<Regex>,
 
-    #[structopt(
-        short="v",
-        long="verbose",
-        help="Print out all visited URLs"
-    )]
+    #[structopt(short = "v", long = "verbose", help = "Print out all visited URLs")]
     pub verbose: bool,
 
     #[structopt(
-        short="t",
-        long="tree",
-        help="Store the tree of visited URLs (may significantly increase RAM usage)"
+        short = "t",
+        long = "tree",
+        help = "Store the tree of visited URLs (may significantly increase RAM usage)"
     )]
-    pub tree: bool
+    pub tree: bool,
 }
 
 impl Options {

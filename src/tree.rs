@@ -2,7 +2,7 @@ pub type TreeResult<T> = Result<T, TreeError>;
 
 #[derive(Debug)]
 pub enum TreeError {
-    NodeIsEmpty
+    NodeIsEmpty,
 }
 
 #[derive(Debug)]
@@ -10,8 +10,8 @@ pub enum Tree<T> {
     Empty,
     NonEmpty {
         value: T,
-        children: Vec<Box<Tree<T>>>
-    }
+        children: Vec<Box<Tree<T>>>,
+    },
 }
 
 impl<T> Tree<T> {
@@ -22,7 +22,7 @@ impl<T> Tree<T> {
     pub fn new(value: T) -> Self {
         Self::NonEmpty {
             value,
-            children: vec![]
+            children: vec![],
         }
     }
 
@@ -63,8 +63,8 @@ mod test {
             Tree::NonEmpty { value, children } => {
                 assert_eq!(value, 997);
                 assert_eq!(children.len(), 0);
-            },
-            _ => panic!("Expected NonEmpty, got empty")
+            }
+            _ => panic!("Expected NonEmpty, got empty"),
         }
     }
 
