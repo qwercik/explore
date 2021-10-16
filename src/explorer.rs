@@ -37,14 +37,20 @@ pub fn explore(options: &Options) -> usize {
 
     queue.push_back(String::from(options.start_url.as_str()));
 
-    'main: while !queue.is_empty() {
+    while !queue.is_empty() {
+        // Could be optimized if url detected after extracting
+        let final_url = queue.iter()
+            .find(|&url| url == options.final_url.as_str());
+        
+        if let Some(url) = final_url {
+            println!("{}", url);
+            break;
+        };
+
         while !queue.is_empty() {
             let current_url = queue.pop_front().unwrap();
             if visited.contains(&current_url) {
                 continue;
-            } else if current_url == options.final_url.as_str() {
-                println!("{}", current_url);
-                break 'main;
             }
 
             println!("{}", current_url);
