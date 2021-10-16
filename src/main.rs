@@ -1,4 +1,5 @@
 mod cli;
+mod tree;
 mod document;
 mod explorer;
 mod url_extractor;
