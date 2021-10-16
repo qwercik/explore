@@ -1,6 +1,7 @@
 use soup::prelude::*;
 use url::Url;
 use regex::Regex;
+use crate::document::Document;
 
 fn valid_scheme(url: &Url) -> bool {
     Regex::new(r"https?")
@@ -8,17 +9,21 @@ fn valid_scheme(url: &Url) -> bool {
         .is_match(url.scheme())
 }
 
-pub fn extract_from_html(html_file_content: &str) -> Vec<Url> {
-    let soup = Soup::new(html_file_content);
-    
-    soup.tag("a")
+pub fn extract_from_html(document: &Document) -> Vec<String> {
+    let soup = Soup::new(document.content());
+    let all_hrefs: Vec<String> = soup.tag("a")
         .find_all()
-        .map(|tag| tag.get("href"))
-        .filter(Option::is_some)
-        .map(Option::unwrap)
-        .map(|s| Url::parse(&s))
-        .filter(Result::is_ok)
-        .map(Result::unwrap)
+        .filter_map(|tag| tag.get("href"))
+        .collect();
+
+    // I assume that if use downloaded something by URL, it should be correct
+    let base_url = Url::parse(document.url()).unwrap();
+
+    let absolute_urls: Vec<_> = all_hrefs.into_iter()
+        .filter_map(|href| base_url.join(&href).ok())
         .filter(valid_scheme)
-        .collect()
+        .map(|url| String::from(url.as_str()))
+        .collect();
+
+    absolute_urls
 }

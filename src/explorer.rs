@@ -1,47 +1,65 @@
 use url::Url;
 use regex::Regex;
-use std::collections::{VecDeque, HashMap};
+use std::collections::{VecDeque, HashSet};
 use crate::cli::Options;
-use crate::downloader::download;
+use crate::document::Document;
 use crate::url_extractor::extract_from_html;
 
-fn is_url_domain_ok(domain_regex: &Regex, url: &Url) -> bool {
-    url.domain()
-        .map(|url| domain_regex.is_match(url))
+fn is_url_domain_ok(domain_regex: &Regex, url: &str) -> bool {
+    Url::parse(url)
+        .map(|parsed_url| match parsed_url.domain() {
+            Some(domain) => domain_regex.is_match(domain),
+            _ => false
+        })
+        .ok()
         .unwrap_or(false)
 }
 
-pub fn explore(options: &Options) {
-    let mut visited: HashMap<String, ()> = HashMap::new();
+fn extract_urls_from_site(url: &str, options: &Options) -> Option<Vec<String>> {
+    let document = Document::download(url)?;
+
+    let urls = extract_from_html(&document);
+    Some(if let Some(regex) = &options.domain_regex {
+        urls.into_iter()
+            .filter(|url| is_url_domain_ok(regex, url))
+            .collect()
+    } else {
+        urls
+    })
+}
+
+pub fn explore(options: &Options) -> usize {
+    let mut visited: HashSet<String> = HashSet::new();
+
     let mut queue = VecDeque::new();
-    queue.push_back(options.start_url.clone());
+    let mut auxillary_queue = VecDeque::new();
+    let mut nesting_level = 0;
 
-    while !queue.is_empty() {
-        let current_url = queue.pop_back().unwrap();
-        if visited.contains_key(current_url.as_str()) {
-            continue;
-        } else if current_url == options.final_url {
-            break;
+    queue.push_back(String::from(options.start_url.as_str()));
+
+    'main: while !queue.is_empty() {
+        while !queue.is_empty() {
+            let current_url = queue.pop_front().unwrap();
+            if visited.contains(&current_url) {
+                continue;
+            } else if current_url == options.final_url.as_str() {
+                println!("{}", current_url);
+                break 'main;
+            }
+
+            println!("{}", current_url);
+            let result = extract_urls_from_site(&current_url, &options);
+            visited.insert(current_url);
+
+            if let Some(urls) = result {
+                auxillary_queue.extend(urls.into_iter());
+            }
         }
-
-        visited.insert(String::from(current_url.as_str()), ());
-        println!("{}", current_url);
-
-        let document = match download(&current_url) {
-            Some(content) => content,
-            None => continue
-        };
-
-
-        let mut urls = extract_from_html(&document);
-        if let Some(regex) = &options.domain_regex {
-            urls = urls.into_iter()
-                .filter(|url| is_url_domain_ok(regex, url))
-                .collect();
-        };
-
-        for url in urls {
-            queue.push_back(url);
-        }
+        
+        println!();
+        nesting_level += 1;
+        queue.append(&mut auxillary_queue);
     }
+
+    nesting_level
 }

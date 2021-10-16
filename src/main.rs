@@ -1,5 +1,5 @@
 mod cli;
-mod downloader;
+mod document;
 mod url_extractor;
 mod explorer;
 
@@ -8,5 +8,6 @@ use explorer::explore;
 
 fn main() {
     let options = Options::get();
-    explore(&options);
+    let nesting_level = explore(&options);
+    println!("Nesting level: {}", nesting_level);
 }
